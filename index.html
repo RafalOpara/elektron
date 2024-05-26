@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phonebook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Phonebook</h1>
+        <div id="addContactForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="tel" id="number" placeholder="Phone number" required>
+            <button id="addContactBtn">Add Contact</button>
+        </div>
+        <button id="showContactsBtn">Show Contacts</button>
+        <div id="contacts" class="contacts-container"></div> <!-- miejsce na wyświetlanie kontaktów -->
+    </div>
+    <script src="main.js"></script>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('addContactBtn').addEventListener('click', () => {
+            const name = document.getElementById('name').value;
+            const number = document.getElementById('number').value;
+            if (name && number) {
+                ipcRenderer.send('addContact', { name, number });
+                document.getElementById('name').value = ''; // Czyszczenie pola po dodaniu kontaktu
+                document.getElementById('number').value = ''; // Czyszczenie pola po dodaniu kontaktu
+            } else {
+                alert('Please enter both name and number!');
+            }
+        });
+
+        document.getElementById('showContactsBtn').addEventListener('click', () => {
+            ipcRenderer.send('getContacts');
+        });
+
+        ipcRenderer.on('showContacts', (event, contacts) => {
+            const contactsDiv = document.getElementById('contacts');
+            contactsDiv.innerHTML = ''; // Czyszczenie diva przed wyświetleniem aktualnej listy kontaktów
+            contacts.forEach((contact, index) => {
+                const contactDiv = document.createElement('div');
+                contactDiv.classList.add('contact');
+                contactDiv.innerHTML = `
+                    <span>${contact.name}: ${contact.number}</span>
+                    <button onclick="deleteContact(${index})">Delete</button>
+                `;
+                contactsDiv.appendChild(contactDiv);
+            });
+        });
+
+        function deleteContact(index) {
+            ipcRenderer.send('deleteContact', index);
+        }
+    </script>
+</body>
+</html>

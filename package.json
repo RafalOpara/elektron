@@ -1,0 +1,16 @@
+{
+  "name": "worthless-cars-store-jdk6y",
+  "productName": "worthless-cars-store-jdk6y",
+  "description": "My Electron application description",
+  "keywords": [],
+  "main": "./main.js",
+  "version": "1.0.0",
+  "author": "Raffael",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "30.0.2"
+  }
+}
